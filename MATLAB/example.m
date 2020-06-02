@@ -1,5 +1,8 @@
 function example(options, input_format)
 
+profile on
+
+
 if nargin == 0
 	options = '';
 end
@@ -22,7 +25,7 @@ b = net_config.wd_input(1);
 d = net_config.ch_input(1);
 
 % Read train data sets
-load('data/mnist-demo.mat', 'y', 'Z');
+load('data/mnist.mat', 'y', 'Z');
 % Because sparse matrices stored in the provided mat file do not store zero columns in the end, we need to fill it.
 Z = [full(Z) zeros(size(Z,1), a*b*d - size(Z,2))];
 
@@ -42,10 +45,12 @@ seed = 111;
 
 model = cnn_train(y, Z, [], [], config_file, options, seed);
 
+profile off
+
 %% Test
 % -----
 % Read test data sets
-load('data/mnist-demo.t.mat', 'y', 'Z');
+load('data/mnist.t.mat', 'y', 'Z');
 % Because sparse matrices stored in the provided mat file do not store zero columns in the end, we need to fill it.
 Z = [full(Z) zeros(size(Z,1), a*b*d - size(Z,2))];
 
