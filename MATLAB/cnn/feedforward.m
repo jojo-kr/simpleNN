@@ -8,7 +8,9 @@ LC = model.LC;
 
 for m = 1 : LC
 	net.phiZ{m} = padding_and_phiZ(model, net, net.Z{m}, m, num_data);
-	net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
+	topack = model.weight{m}*net.phiZ{m};
+    kas = topack + model.bias{m};
+    net.Z{m+1} = max(kas, 0);
 
 	if model.wd_subimage_pool(m) > 1
 		[net.Z{m+1}, net.idx_pool{m}] = maxpooling(model, net, net.Z{m+1}, m);
