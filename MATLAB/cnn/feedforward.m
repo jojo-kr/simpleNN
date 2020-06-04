@@ -19,7 +19,8 @@ dab = model.ch_input(LC+1) * model.wd_input(LC+1) * model.ht_input(LC+1);
 net.Z{LC+1} = reshape(net.Z{LC+1}, dab, []);
 
 for m = LC+1 : L-1
-	net.Z{m+1} = max(model.weight{m}*net.Z{m} + model.bias{m}, 0);
+    input1 = model.weight{m}*net.Z{m};
+	net.Z{m+1} = max(input1 + model.bias{m}, 0);
 end
 
 net.Z{L+1} = model.weight{L}*net.Z{L} + model.bias{L};

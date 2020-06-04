@@ -75,8 +75,17 @@ for m = LC : -1 : 1
 	ab = model.ht_conv(m)*model.wd_conv(m);
 
 	p = reshape(v(var_range), d, []);
-	p = p(:, 1:end-1)*net.phiZ{m} + p(:, end);
-	p = sum(reshape(net.dzdS{m}, d*ab, nL, []) .* reshape(p, d*ab, 1, []),1);
+	
+	p1 = p(:, 1:end-1);
+    p2 = net.phiZ{m};
+    p3 = p(:, end);
+    p4 = p1*p2;
+    p = p4+p3;
+    
+    rp1 = reshape(net.dzdS{m}, d*ab, nL, []);
+    rp2 = reshape(p, d*ab, 1, []);
+    rp3 = rp1 .* rp2;
+    p = sum(rp3,1);
 	Jv = Jv + p(:);
 end
 
@@ -101,11 +110,13 @@ for m = LC : -1 : 1
 	d = model.ch_input(m+1);
 	var_range = var_ptr(m) : var_ptr(m+1) - 1;
 
-	u_m = reshape(net.dzdS{m}, [], nL*num_data) .* Jv';
+	u_m = reshape(net.dzdS{m}, [], nL*num_data);
+    u_m = u_m .* Jv';
 	u_m = sum(reshape(u_m, [], nL, num_data), 2);
 
 	u_m = reshape(u_m, d, []);
-	u_m = [u_m*net.phiZ{m}' sum(u_m, 2)];
+    um1 = u_m*net.phiZ{m}';
+	u_m = [um1 sum(u_m, 2)];
 	u(var_range) = u(var_range) + u_m(:);
 end
 

@@ -18,7 +18,8 @@ for m = LC : -1 : 1
 	end
 	v = reshape(v, model.ch_input(m+1), []);
 
-	JTv_{m} = [v*net.phiZ{m}' sum(v, 2)];
+    HL = v*net.phiZ{m}';
+	JTv_{m} = [HL sum(v, 2)];
 
 	if m > 1
 		v = model.weight{m}' * v;
