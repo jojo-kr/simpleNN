@@ -14,10 +14,17 @@ for m = 1 : LC
 	v_ = reshape(v(var_range), d, []);
 
 	net.phiZ{m} = padding_and_phiZ(model, net, net.Z{m}, m, num_data);
-	net.Z{m+1} = max(model.weight{m}*net.phiZ{m} + model.bias{m}, 0);
+	
+    kpt = model.weight{m}*net.phiZ{m};
+    asz = kpt + model.bias{m};
+    net.Z{m+1} = max(asz, 0);
 
 	R_Z = padding_and_phiZ(model, net, R_Z, m, num_data);
-	R_Z = model.weight{m}*R_Z + v_(:, 1:end-1)*net.phiZ{m} + v_(:, end);
+	crl = model.weight{m}*R_Z;
+    
+    zcx = v_(:, 1:end-1);
+    zoa = zcx*net.phiZ{m};
+    R_Z = crl + zoa + v_(:, end);
 
 	if model.wd_subimage_pool(m) > 1
 		[net.Z{m+1}, net.idx_pool{m}, R_Z] = maxpooling(model, net, net.Z{m+1}, m, R_Z);
